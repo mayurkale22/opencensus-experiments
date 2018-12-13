@@ -63,7 +63,7 @@ message RegistrationResponse {
 message TestRequest {
   int64 id = 1;
   string name = 2;
-  repeated ServiceHop service_hops = 3;
+  //repeated ServiceHop service_hops = 3;
 }
 
 message ServiceHop {
@@ -78,7 +78,7 @@ message Tag {
 
 message TestResponse {
   int64 id = 1;
-  repeated CommonResponseStatus status = 2;
+  //repeated CommonResponseStatus status = 2;
 }
 
 enum ServicePort {

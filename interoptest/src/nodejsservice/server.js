@@ -12,10 +12,50 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-var http = require('http');
+var path = require('path');
+var grpc = require('grpc');
+var protoLoader = require('@grpc/proto-loader');
+var testservice = require('./src/testservice/grpc-receiver');
+var core = require('@opencensus/core');
+var tracing = require('@opencensus/nodejs');
+var jaeger = require('@opencensus/exporter-jaeger');
 
-var server = http.createServer(function(req, res) {
-res.writeHead(200);
-res.end('Hi everybody! it is nodejsservice');
-});
-server.listen(10301);
+var PROTO_PATH = path.join(__dirname, 'proto/interoperability_test.proto');
+
+var packageDefinition = protoLoader.loadSync(
+  PROTO_PATH,
+  {keepCase: true,
+    longs: String,
+    enums: String,
+    defaults: true,
+    oneofs: true
+  });
+var interopProto = grpc.loadPackageDefinition(packageDefinition).interop;
+
+/**
+ * Register the Jaeger exporter to be able to retrieve
+ * the collected spans.
+ */
+function registerJaegerExporter () {
+  var jaegerOptions = {
+    serviceName: 'nodejsservice',
+    host: 'localhost',
+    port: 6832,
+    bufferTimeout: 10, // time in milliseconds
+    logger: core.logger.logger('debug'),
+    maxPacketSize: 1000
+  };
+
+  var exporter = new jaeger.JaegerTraceExporter(jaegerOptions);
+  tracing.registerExporter(exporter).start();
+}
+
+function main () {
+  registerJaegerExporter();
+
+  // Unable to read enum value from proto:
+  // https://github.com/grpc/grpc/issues/8595
+  testservice.newGRPCReciever(10031);
+}
+
+main();

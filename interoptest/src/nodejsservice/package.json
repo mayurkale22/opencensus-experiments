@@ -9,13 +9,19 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "semistandard *.js",
+    "lint": "semistandard src/testservice/*.js *.js",
     "start": "node server.js"
   },
   "author": "opencensus team",
   "license": "ISC",
   "dependencies": {
-    "http": "*"
+    "@grpc/proto-loader": "^0.3.0",
+    "@opencensus/core": "^0.0.7",
+    "@opencensus/nodejs": "^0.0.7",
+    "@opencensus/exporter-jaeger": "^0.0.7",
+    "@opencensus/instrumentation-grpc": "^0.0.7",
+    "http": "*",
+    "grpc": "^1.16.1"
   },
   "devDependencies": {
     "semistandard": "^12.0.1"
