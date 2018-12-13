@@ -14,24 +14,33 @@
  * limitations under the License.
  */
 
-var path = require('path');
-var grpc = require('grpc');
-var protoLoader = require('@grpc/proto-loader');
+// const path = require('path');
+// const grpc = require('grpc');
+// const protoLoader = require('@grpc/proto-loader');
 
-var PROTO_PATH = path.join(__dirname, '../../proto/interoperability_test.proto');
+// const PROTO_PATH = path.join(__dirname, '../../proto/interoperability_test.proto');
+// const PROTO_OPTIONS = {keepCase: true, longs: String, enums: String, defaults: true, oneofs: true};
 
-var packageDefinition = protoLoader.loadSync(
-  PROTO_PATH,
-  {keepCase: true,
-    longs: String,
-    enums: String,
-    defaults: true,
-    oneofs: true
-  });
-var interopProto = grpc.loadPackageDefinition(packageDefinition).interop;
+// const packageDefinition = protoLoader.loadSync(PROTO_PATH, PROTO_OPTIONS);
+// const interopProto = grpc.loadPackageDefinition(packageDefinition).interop;
 
-function main () {
-  var client = new interopProto.TestExecutionService('localhost:50051',
+// // Send sends gRPC request to a server specified by serviceHop.
+// function send () {
+//   const client = new interopProto.TestExecutionService('localhost:10301',
+//     grpc.credentials.createInsecure());
+//   client.test({name: 'mayur', id: 2211}, function (err, response) {
+//     if (err) {
+//       console.log(err);
+//     }
+//     console.log('Greeting:', response.id);
+//   });
+// };
+
+// send();
+
+// Send sends gRPC request to a server specified by serviceHop.
+exports.send = function (grpc, interopProto) {
+  const client = new interopProto.TestExecutionService('localhost:10301',
     grpc.credentials.createInsecure());
   client.test({name: 'mayur', id: 2211}, function (err, response) {
     if (err) {
@@ -39,6 +48,4 @@ function main () {
     }
     console.log('Greeting:', response.id);
   });
-}
-
-main();
+};

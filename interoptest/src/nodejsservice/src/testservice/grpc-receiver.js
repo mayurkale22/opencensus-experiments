@@ -14,24 +14,19 @@
  * limitations under the License.
  */
 
-var path = require('path');
-var grpc = require('grpc');
-var protoLoader = require('@grpc/proto-loader');
+const path = require('path');
+//const grpc = require('grpc');
+const protoLoader = require('@grpc/proto-loader');
 
-var PROTO_PATH = path.join(__dirname, '../../proto/interoperability_test.proto');
+// const PROTO_PATH = path.join(__dirname, '../../proto/interoperability_test.proto');
+// const PROTO_OPTIONS = {keepCase: true, longs: String, enums: String, defaults: true, oneofs: true};
 
-var packageDefinition = protoLoader.loadSync(
-  PROTO_PATH,
-  {keepCase: true,
-    longs: String,
-    enums: String,
-    defaults: true,
-    oneofs: true
-  });
-var interopProto = grpc.loadPackageDefinition(packageDefinition).interop;
+// const packageDefinition = protoLoader.loadSync(PROTO_PATH, PROTO_OPTIONS);
+// const interopProto = grpc.loadPackageDefinition(packageDefinition).interop;
 
 // Implements the test RPC method.
 function test (call, callback) {
+  console.log("inside test");
   callback(null, {id: call.request.id});
 }
 
@@ -39,10 +34,13 @@ function test (call, callback) {
  * Starts an RPC server that receives requests for the TestExecutionService
  * service at the (NODEJS_GRPC_BINARY_PROPAGATION_PORT) server port
  */
-exports.newGRPCReciever = function (grpcPort) {
-  var server = new grpc.Server();
+exports.newGRPCReciever = function (grpc, grpcPort, interopProto) {
+  const server = new grpc.Server();
   // Define server with the methods and start it
   server.addService(interopProto.TestExecutionService.service, {test: test});
   server.bind('0.0.0.0:' + grpcPort, grpc.ServerCredentials.createInsecure());
   server.start();
+
+  console.log('started server');
+  console.log(server);
 };
